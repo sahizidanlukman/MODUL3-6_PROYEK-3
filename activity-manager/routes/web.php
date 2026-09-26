@@ -7,5 +7,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/activities', [ActivityController::class, 'index'])
-    ->name('activities.index');
+Route::resource('activities', ActivityController::class);
