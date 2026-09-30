@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
+            $table->foreignId('category_id')->constrained()->restrictOnDelete(); 
+            $table->string('title', 100)->unique(); 
             $table->text('description')->nullable();
             $table->date('activity_date');
-            $table->string('category', 50);
             $table->string('status', 20)->default('Planned');
             $table->timestamps();
         });
