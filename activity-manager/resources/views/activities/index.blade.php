@@ -9,15 +9,25 @@
 
     <p><a href="{{ route('activities.create') }}">+ Tambah Kegiatan Baru</a></p>
 
-    {{-- Form Filter Status (Independent Challenge) --}}
+    {{-- Form Filter Status & Search --}}
     <form method="GET" action="{{ route('activities.index') }}" style="margin-bottom: 20px;">
         <label for="status"><strong>Filter Status:</strong></label>
         <select name="status" id="status" onchange="this.form.submit()">
             <option value="">Semua Status</option>
-            <option value="Planned" {{ ($selectedStatus ?? '') == 'Planned' ? 'selected' : '' }}>Planned</option>
-            <option value="Ongoing" {{ ($selectedStatus ?? '') == 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
-            <option value="Done" {{ ($selectedStatus ?? '') == 'Done' ? 'selected' : '' }}>Done</option>
+            <option value="Planned" {{ ($selectedStatus ?? request('status')) == 'Planned' ? 'selected' : '' }}>Planned</option>
+            <option value="Ongoing" {{ ($selectedStatus ?? request('status')) == 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
+            <option value="Done" {{ ($selectedStatus ?? request('status')) == 'Done' ? 'selected' : '' }}>Done</option>
+            <option value="draft" {{ ($selectedStatus ?? request('status')) == 'draft' ? 'selected' : '' }}>Draft</option>
+            <option value="published" {{ ($selectedStatus ?? request('status')) == 'published' ? 'selected' : '' }}>Published</option>
         </select>
+
+        {{-- Input Search --}}
+        <input type="text" name="search" placeholder="Cari kegiatan..." value="{{ request('search') }}" style="margin-left: 10px;">
+        <button type="submit">Cari</button>
+
+        @if(request('status') || request('search'))
+            <a href="{{ route('activities.index') }}" style="margin-left: 5px;">Reset</a>
+        @endif
     </form>
 
     {{-- Pesan Sukses --}}
@@ -43,5 +53,12 @@
     @empty
         <p>Belum ada kegiatan.</p>
     @endforelse
+
+    {{-- Link Pagination --}}
+    @if(method_exists($activities, 'links'))
+        <div style="margin-top: 20px;">
+            {{ $activities->withQueryString()->links() }}
+        </div>
+    @endif
 </body>
 </html>
