@@ -32,11 +32,17 @@ class ActivityController extends Controller
         return view('activities.create');
     }
 
-    public function store(StoreActivityRequest $request): RedirectResponse
+    public function store(StoreActivityRequest $request)
     {
-        Activity::create($request->validated());
+    $data = $request->validated();
 
-        return redirect()->route('activities.index')->with('success', 'Kegiatan berhasil ditambahkan!');
+    if ($request->hasFile('poster')) {
+        $data['poster_path'] = $request->file('poster')->store('posters', 'public');
+    }
+
+    Activity::create($data);
+
+    return redirect()->route('activities.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
     public function show(Activity $activity)
@@ -49,15 +55,21 @@ class ActivityController extends Controller
         return view('activities.edit', compact('activity'));
     }
 
-    public function update(UpdateActivityRequest $request, Activity $activity, ActivityService $service)
+    public function update(UpdateActivityRequest $request, Activity $activity)
     {
-        try {
-            $service->update($activity, $request->validated());
+    $data = $request->validated();
 
-            return redirect()->route('activities.index')->with('success', 'Kegiatan berhasil diperbarui!');
-        } catch (DomainException $e) {
-            return back()->withErrors(['status' => $e->getMessage()])->withInput();
+    if ($request->hasFile('poster')) {
+        if ($activity->poster_path) {
+            Storage::disk('public')->delete($activity->poster_path);
         }
+
+        $data['poster_path'] = $request->file('poster')->store('posters', 'public');
+    }
+
+    $activity->update($data);
+
+    return redirect()->route('activities.index')->with('success', 'Kegiatan berhasil diperbarui!');
     }
 
     public function destroy(Activity $activity): RedirectResponse

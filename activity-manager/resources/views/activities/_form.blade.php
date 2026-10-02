@@ -23,9 +23,9 @@
 </div>
 
 <div>
-    <label for="category">Kategori</label>
-    <input type="text" id="category" name="category" value="{{ old('category', $activity->category ?? '') }}">
-    @error('category')
+    <label for="category_id">ID Kategori</label>
+    <input type="number" id="category_id" name="category_id" value="{{ old('category_id', $activity->category_id ?? 1) }}">
+    @error('category_id')
         <p class="error">{{ $message }}</p>
     @enderror
 </div>
@@ -39,6 +39,14 @@
         <option value="Done" {{ old('status', $activity->status ?? '') == 'Done' ? 'selected' : '' }}>Done</option>
     </select>
     @error('status')
+        <p class="error">{{ $message }}</p>
+    @enderror
+</div>
+
+<div>
+    <label for="poster">Poster Kegiatan</label>
+    <input type="file" id="poster" name="poster" accept="image/*">
+    @error('poster')
         <p class="error">{{ $message }}</p>
     @enderror
 </div>
